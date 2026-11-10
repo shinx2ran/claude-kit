@@ -6,7 +6,7 @@ The main session is the orchestrator. It normally runs on Fable, the most expens
 
 ## New repository
 
-If the repository has no `CLAUDE.md` at its root, offer once to create one from `~/.claude/templates/project-CLAUDE.md`. Fill in what you can find in the code, and ask the user only for what you can't.
+If the repository has no `CLAUDE.md` at its root, offer once to create one from `.claude/templates/project-CLAUDE.md`. Fill in what you can find in the code, and ask the user only for what you can't.
 
 ## Agents
 
@@ -18,10 +18,10 @@ If the repository has no `CLAUDE.md` at its root, offer once to create one from 
 | `repeater` | Haiku · low | One defined change repeated across many files or items: renames, the same edit everywhere, UI string translations | Anything needing judgment; money or stock values |
 | `worker` | Sonnet · medium | Edits with a clear spec: features, fixes with a known cause, tests, refactors | Anything on the keep list |
 | `reviewer` | Sonnet · high | Fresh-eyes check of a finished change against its brief | Writing or fixing code |
-| `db-agent` | Opus · high | All Supabase work: read-only checks, schema and migration design, RLS policies, applying approved changes | App code |
+| `db-agent` (only if installed) | Opus · high | All Supabase work: read-only checks, schema and migration design, RLS policies, applying approved changes | App code |
 | Main session | Fable | Planning, design, unclear bugs, the keep list, final sign-off | Bulk reading, log reading, routine edits |
 
-Use `general-purpose` only when none of the agents above fits, and pass model `sonnet`.
+Use `general-purpose` (Sonnet) only when none of the agents above fits. Never spawn `claude`, `Plan` or `fork`: they run on the main session's model. Plan on the main session, with `Explore` for lookups.
 
 ## Do it yourself, or delegate?
 
@@ -35,7 +35,7 @@ Use `general-purpose` only when none of the agents above fits, and pass model `s
 - Long-lived choices: new libraries, app structure, folder layout
 - Final sign-off on every task
 
-**Database work goes to `db-agent` (Opus)**, not the main session. It shows the exact SQL before any change, and your permission prompt is the approval. Take the job back to the main session only when db-agent reports it is blocked, has failed twice, or the job needs a business decision. Don't do database lookups yourself; the main session has no Supabase connection of its own.
+**Database work.** If `db-agent` is in your agent list, all database work goes to it: it shows the exact SQL before any change, and the user's permission prompt is the approval. Take the job back only when db-agent reports it is blocked, has failed twice, or the job needs a business decision. If `db-agent` is not installed, the main session does database work itself and asks the user before any change to a schema, a security policy or live data.
 
 **Money and stock logic** (prices, discounts, totals, HPP and costs, stock quantities, stock opname): `worker` may write it, at effort `high`. Before sign-off, the main session reads every changed line and checks one worked example by hand.
 
@@ -61,7 +61,6 @@ If an agent stops with a question, answer it from what you know. If the answer c
 - When a report cites `file:line`, read just those lines, not the whole file.
 - Never pass `fable` as a subagent's model unless the user asks. Besides `db-agent`, which always runs on Opus, pass `opus` only in two cases: the escalation step below, and reviewing money or stock logic. For purely mechanical, repetitive edits, use `repeater` instead of `worker`.
 - Pass effort `high` to `worker` for bug fixes in existing code and for money or stock logic.
-- Don't start forks for routine work. Forks run on Fable.
 
 ## Trust, then verify
 
