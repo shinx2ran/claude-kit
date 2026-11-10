@@ -1,0 +1,8 @@
+{
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
+    "CLAUDE_CODE_FORK_SUBAGENT": "0",
+    "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "1",
+    "CLAUDE_CODE_GLOB_NO_IGNORE": "false"
+  }
+}
